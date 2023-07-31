@@ -35,7 +35,7 @@ async function run() {
     const cartsCollection = client.db("schoolDb").collection("carts");
 
 
-    //user
+    // add user to the db
     app.post('/users', async (req, res) => {
         console.log('Received POST request at /users');
   console.log('Request body:', req.body);
@@ -53,24 +53,44 @@ async function run() {
         res.send(result);
       });
 
+      // get all users
       app.get('/users', async (req, res) => {
         const result = await usersCollection.find().toArray();
         res.send(result);
       })
 
+      //get all students from database 
+      app.get('/allStudents', async (req, res) => {
+        const query = { role: 'student' }
+        const students = await usersCollection.find(query).toArray();
+        res.send(students)
+    });
+
       app.post('/carts', async (req, res) => {
         const item = req.body;
-        console.log(item);
         const result = await cartsCollection.insertOne(item);
         res.send(result);
       })
-      app.get('/users/:email', async (req, res) => {
+
+      // verify admin
+      app.get('/users/admin/:email', async (req, res) => {
         const email = req.params.email;
         const query = { email: email }
         const user = await usersCollection.findOne(query);
         if(user?.role === 'admin') res.send({isAdmin : true})
         else res.send({isAdmin : false})
     });
+      // verify instructor
+      app.get('/users/instructor/:email', async (req, res) => {
+        const email = req.params.email;
+        const query = { email: email }
+        const user = await usersCollection.findOne(query);
+        if(user?.role === 'instructor') res.send({isInstructor : true})
+        else res.send({isInstructor : false})
+    });
+
+    
+
     // get classes data
     app.get('/classes', async (req, res) => {
         const result = await classesCollection.find().toArray();
@@ -94,7 +114,7 @@ async function run() {
     //     res.send(result);
     //   })
 
-      //extra data
+      // get extra data
     app.get('/extra', async (req, res) => {
         const result = await extraCollection.find().toArray();
         res.send(result);
