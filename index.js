@@ -88,6 +88,14 @@ async function run() {
         if(user?.role === 'instructor') res.send({isInstructor : true})
         else res.send({isInstructor : false})
     });
+      // verify student
+      app.get('/users/student/:email', async (req, res) => {
+        const email = req.params.email;
+        const query = { email: email }
+        const user = await usersCollection.findOne(query);
+        if(user?.role === 'student') res.send({isStudent : true})
+        else res.send({isStudent : false})
+    });
 
     
 
