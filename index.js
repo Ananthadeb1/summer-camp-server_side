@@ -59,13 +59,6 @@ async function run() {
         res.send(result);
       })
 
-      //get all students from database 
-      app.get('/allStudents', async (req, res) => {
-        const query = { role: 'student' }
-        const students = await usersCollection.find(query).toArray();
-        res.send(students)
-    });
-
       app.post('/carts', async (req, res) => {
         const item = req.body;
         const result = await cartsCollection.insertOne(item);
@@ -96,6 +89,14 @@ async function run() {
         if(user?.role === 'student') res.send({isStudent : true})
         else res.send({isStudent : false})
     });
+
+    // get user details by email 
+    app.get('/user', async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email }
+      const user = await usersCollection.findOne(query);
+      res.send(user);
+  });
 
     
 
