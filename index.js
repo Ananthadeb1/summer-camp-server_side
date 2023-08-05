@@ -97,6 +97,20 @@ async function run() {
       const user = await usersCollection.findOne(query);
       res.send(user);
   });
+//make instructor
+  app.put('/users/instructor/:id', async (req, res) => {
+    const id = req.params.id;
+    const filter = { _id: new ObjectId(id) };
+    const updateDoc = {
+      $set: {
+        role: 'instructor'
+      },
+    };
+
+    const result = await usersCollection.updateOne(filter, updateDoc);
+    res.send(result);
+
+  })
 
     
 
@@ -141,8 +155,6 @@ async function run() {
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
   }
 }
 run().catch(console.dir);
